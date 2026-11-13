@@ -1,0 +1,481 @@
+:root {
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --surface-sunken: #efede7;
+  --ink: #211c17;
+  --ink-soft: #6b6157;
+  --border: #e2ded4;
+  --accent: #a8632a;
+  --accent-soft: #f1e2cc;
+  --accent-contrast: #ffffff;
+  --danger: #ae2e24;
+  --danger-soft: #f8e4e1;
+  --success: #2f6f4e;
+  --success-soft: #e1efe6;
+  --warning: #8a5a00;
+  --warning-soft: #fbebc9;
+
+  --font-ui: -apple-system, "Segoe UI", Roboto, ui-sans-serif, system-ui, sans-serif;
+  --font-num: ui-monospace, "Cascadia Mono", "SF Mono", "Consolas", monospace;
+
+  --radius: 8px;
+  --shadow-sm: 0 1px 2px rgba(33, 28, 23, 0.08);
+  --shadow-md: 0 4px 16px rgba(33, 28, 23, 0.10);
+
+  /* Custom cursor accent (see .cursor-outer / .cursor-inner below) */
+  --cursor-accent: #dc2626;
+  --cursor-accent-soft: rgba(220, 38, 38, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Every figure — price, quantity, invoice number — renders in
+   monospace with tabular figures, so columns of numbers line up like
+   a register tape. This is deliberate and functional: it's how a
+   cashier scans a bill fast, not decoration. */
+.num, .money, input[type="number"], .invoice-number {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}
+
+a { color: var(--accent); }
+
+button { font-family: inherit; }
+
+.app-shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 224px;
+  background: var(--ink);
+  color: #f1ede4;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+.sidebar-close-btn { display: none; }
+
+.sidebar-backdrop { display: none; }
+
+/* ---- Responsive: below this width, the sidebar becomes an
+   off-canvas drawer instead of a permanent column — a fixed 224px
+   sidebar would eat more than half of a phone screen otherwise. ---- */
+@media (max-width: 860px) {
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    z-index: 210;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--shadow-md);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-close-btn {
+    display: block;
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: rgba(241,237,228,0.7);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .sidebar-backdrop.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 200;
+  }
+}
+
+.sidebar-brand {
+  padding: 20px 18px 12px;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.branch-switcher {
+  margin: 12px 14px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.08);
+  border-radius: var(--radius);
+  border: none;
+  color: #f1ede4;
+  font-size: 13px;
+  width: calc(100% - 28px);
+}
+
+.nav-group { margin-top: 14px; }
+.nav-eyebrow-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0 18px;
+  margin-bottom: 4px;
+}
+.nav-eyebrow-toggle:hover .nav-eyebrow { color: rgba(241,237,228,0.75); }
+.nav-caret {
+  font-size: 10px;
+  color: rgba(241,237,228,0.4);
+  transition: transform 0.15s ease;
+  transform: rotate(-90deg);
+}
+.nav-caret.open { transform: rotate(0deg); }
+.nav-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(241,237,228,0.5);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.nav-link {
+  display: block;
+  padding: 9px 18px;
+  color: rgba(241,237,228,0.85);
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-link:hover { background: rgba(255,255,255,0.06); }
+.nav-link.active { background: var(--accent); color: white; font-weight: 600; }
+
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.topbar {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+
+.hamburger-btn {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 36px; height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  color: var(--ink);
+  flex-shrink: 0;
+}
+@media (max-width: 860px) {
+  .hamburger-btn { display: flex; align-items: center; justify-content: center; }
+}
+
+.content { padding: 24px; flex: 1; overflow: auto; }
+@media (max-width: 640px) {
+  .content { padding: 14px; }
+  .topbar { padding: 0 14px; }
+}
+
+@media (max-width: 480px) {
+  .topbar-right { gap: 8px; }
+  .topbar-right .username-text { max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+/* Any table wrapped in this scrolls horizontally instead of breaking
+   the page layout on a narrow screen — a 6-column table simply can't
+   fit a 375px phone otherwise. */
+.table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+.page-loading, .page-empty {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+h1, h2, h3 { margin: 0 0 4px; }
+h1 { font-size: 20px; }
+h2 { font-size: 16px; }
+p { color: var(--ink-soft); line-height: 1.5; }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; } }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); }
+th { color: var(--ink-soft); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+td.num, th.num { text-align: right; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+}
+.btn:hover { background: var(--surface-sunken); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: var(--accent-contrast); }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-danger { background: var(--danger); border-color: var(--danger); color: white; }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-sm { padding: 5px 10px; font-size: 13px; }
+
+input, select, textarea {
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--surface);
+  color: var(--ink);
+  width: 100%;
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+label { display: block; font-size: 13px; color: var(--ink-soft); margin-bottom: 4px; }
+.field { margin-bottom: 14px; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.badge-success { background: var(--success-soft); color: var(--success); }
+.badge-warning { background: var(--warning-soft); color: var(--warning); }
+.badge-danger { background: var(--danger-soft); color: var(--danger); }
+.badge-neutral { background: var(--surface-sunken); color: var(--ink-soft); }
+
+.offline-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.offline-badge.ok { background: var(--success-soft); color: var(--success); }
+.offline-badge.warn { background: var(--warning-soft); color: var(--warning); }
+.offline-badge.bad { background: var(--danger-soft); color: var(--danger); }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+.login-wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+  padding: 20px;
+}
+.login-card {
+  width: min(340px, 100%);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 32px 28px;
+  box-shadow: var(--shadow-md);
+}
+
+.matrix-table th, .matrix-table td { text-align: center; }
+.matrix-table th:first-child, .matrix-table td:first-child { text-align: left; }
+.perm-toggle {
+  width: 20px; height: 20px; cursor: pointer;
+}
+
+.bill-layout { display: grid; grid-template-columns: 1fr 360px; gap: 18px; align-items: start; }
+@media (max-width: 1000px) { .bill-layout { grid-template-columns: 1fr; } }
+.bill-line { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+.bill-total-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 15px; }
+.bill-total-row.grand { font-weight: 700; font-size: 18px; border-top: 1px solid var(--border); margin-top: 8px; padding-top: 10px; }
+
+/* ---- Modals (Receipt, Calculator) ---- */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(33,28,23,0.5);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100; padding: 20px;
+}
+.modal-card {
+  background: var(--surface); border-radius: 12px; padding: 24px;
+  max-width: 420px; width: 100%; max-height: 90vh; overflow: auto;
+  box-shadow: var(--shadow-md);
+}
+@media (max-width: 480px) {
+  .modal-overlay { padding: 10px; }
+  .modal-card { padding: 16px; }
+}
+
+/* ---- Printable receipt ----
+   On screen, the receipt just sits inside its modal like any other
+   content. When the browser print dialog opens, everything else on
+   the page is hidden and only the receipt is shown — no popup window,
+   no extra library, works with any printer or "print to PDF". */
+.receipt-print-area { font-family: var(--font-num); font-size: 13px; }
+.receipt-print-area table { font-size: 12px; }
+@media print {
+  body * { visibility: hidden; }
+  .receipt-print-area, .receipt-print-area * { visibility: visible; }
+  .receipt-print-area { position: fixed; top: 0; left: 0; width: 100%; padding: 12px; }
+  .no-print { display: none !important; }
+}
+
+/* ---- Calculator ---- */
+.calc-display {
+  background: var(--ink); color: #fff; font-family: var(--font-num);
+  font-size: 28px; text-align: right; padding: 14px 12px; border-radius: 8px;
+  margin-bottom: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.calc-key {
+  padding: 14px 0; border-radius: 8px; border: 1px solid var(--border);
+  background: var(--surface-sunken); font-size: 16px; font-family: var(--font-num);
+  cursor: pointer;
+}
+.calc-key:hover { filter: brightness(0.97); }
+.calc-key.op { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.calc-key.wide { grid-column: span 2; }
+
+/* ---- Custom cursor ----
+   Only on devices with a real mouse (hover:none + pointer:coarse
+   covers phones/tablets) — never hides the native cursor on a touch
+   screen, where there's no pointer to draw an alternative for. */
+body { cursor: none; }
+@media (hover: none) and (pointer: coarse) {
+  body { cursor: auto; }
+  .cursor-outer, .cursor-inner { display: none; }
+}
+
+.cursor-outer, .cursor-inner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cursor-inner {
+  width: 6px;
+  height: 6px;
+  background: var(--cursor-accent);
+}
+
+.cursor-outer {
+  width: 36px;
+  height: 36px;
+  border: 1.5px solid var(--cursor-accent-soft);
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+}
+
+body.cursor-hover .cursor-outer {
+  width: 56px;
+  height: 56px;
+  background: var(--cursor-accent-soft);
+  border-color: var(--cursor-accent);
+}
+
+body.cursor-active .cursor-outer {
+  width: 28px;
+  height: 28px;
+}
+
+body.cursor-hidden .cursor-outer,
+body.cursor-hidden .cursor-inner {
+  opacity: 0;
+}
+
+.cursor-ripple {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid var(--cursor-accent);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  animation: cursorRipple 0.6s ease-out forwards;
+}
+@keyframes cursorRipple {
+  to { width: 70px; height: 70px; opacity: 0; border-width: 1px; }
+}
+
+/* ---- Refund mode picker ---- */
+.mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
+@media (max-width: 640px) { .mode-grid { grid-template-columns: 1fr; } }
+.mode-card {
+  text-align: left; display: flex; flex-direction: column; gap: 6px; padding: 12px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; font-size: 13px; color: var(--ink);
+}
+.mode-card span { color: var(--ink-soft); font-size: 12px; line-height: 1.4; }
+.mode-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.mode-card:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---- Dashboard ---- */
+.dash-controls { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
+.dash-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.dash-range { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.dash-range input, .dash-range select { width: auto; }
+.dash-kpis { margin-top: 16px; }
+.kpi .kpi-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-soft); }
+.kpi .kpi-value { font-size: 26px; font-weight: 700; margin: 6px 0 2px; overflow-wrap: anywhere; }
+.kpi .kpi-sub { font-size: 12px; color: var(--ink-soft); }
+.kpi-good .kpi-value { color: var(--success); }
+.kpi-bad .kpi-value { color: var(--danger); }
+.kpi-warn .kpi-value { color: var(--warning); }
+.pnl-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--border); font-size: 14px; }
+.pnl-row.strong { font-weight: 700; border-bottom: 1px solid var(--border); }
+.pnl-row.tone-good { color: var(--success); }
+.pnl-row.tone-bad { color: var(--danger); }
+.bar-row { display: grid; grid-template-columns: 110px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; font-size: 14px; }
+.bar-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-transform: capitalize; }
+.bar-track { background: var(--surface-sunken); border-radius: 999px; height: 10px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.bar-value small { color: var(--ink-soft); }
+.adj-form { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.adj-form input, .adj-form select { width: auto; min-width: 120px; }
+.adj-form .field input { width: 100%; }
+
+/* ---- Barcode / QR camera scanner ---- */
+.scan-video { width: 100%; max-height: 55vh; object-fit: cover; border-radius: 8px; background: #000; }
+tr.row-selected td { background: var(--accent-soft); }
+.notice { padding: 10px 12px; border-radius: var(--radius); margin-bottom: 14px; font-size: 14px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.notice.ok { background: var(--success-soft); color: var(--success); }
+.notice.warn { background: var(--warning-soft); color: var(--warning); }
